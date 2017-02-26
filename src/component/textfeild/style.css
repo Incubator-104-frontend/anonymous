@@ -1,0 +1,53 @@
+
+.inputRoot .input,.inputRoot .textarea{
+	height: auto;
+	padding:10px;
+	font-size: 16px;
+	line-height: 20px;
+	outline: 0;
+	border: 0;
+	resize : none;
+	overflow: hidden;
+	background: #DCE2EA;
+	color: #333;
+}
+.inputRoot .input:focus,.inputRoot .textarea:focus{
+	border: 1px solid #42ADC8;
+}
+.error.input, .error.textarea{
+	border:1px solid #ff530d;
+}
+.errorMessage {
+	color: #ff530d;
+	font-size: 14px;
+	float: left;
+}
+.maxWord {
+	float: right;
+}
+.input,.textarea {
+	width: 100%;
+	position: relative;
+}
+.textarea {
+	min-height: 84px;
+}
+.AClist {
+	border: 1px solid #42ADC8;
+	position: absolute;
+	z-index: 9;
+	background: #fff;
+	overflow: auto;
+}
+.AClist li{
+	padding-left: 10px;
+	list-style: none;
+	cursor: pointer;
+	color: #838383;
+}
+.AClist li span {
+	color: #000;
+}
+.error .front {
+	color: #ff530d;
+}
