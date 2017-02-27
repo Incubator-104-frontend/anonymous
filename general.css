@@ -44,7 +44,8 @@ table {
 
 html, body{
     font-size: 16px;
-    background-color: #EFF2F9;
+    background-color: #fff;
+    color: #222;
 }
 * {
     box-sizing: border-box;
@@ -100,10 +101,9 @@ button {
 }
 
 .markdown-content {
-	padding: 20px;
-    margin: 20px 0;
-    background-color: #DCE2EA;
+	padding: 0 20px;
     line-height: 1.5em;
+    color: #777;
 }
 .markdown-content a {
     color: #1399E9;
