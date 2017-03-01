@@ -4,8 +4,9 @@ import style from './style.css';
 
 const Title = (props) => {
     return(
-        <div styleName="container">
-            {props.children}
+        <div styleName="divider">
+            <hr/>
+            <div styleName="text">{props.children}</div>
         </div>
     );
 }

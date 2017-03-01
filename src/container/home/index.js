@@ -4,14 +4,19 @@ import CSSModule from 'react-css-modules';
 
 import { connect } from 'react-redux'
 import { firebase, helpers } from 'redux-react-firebase'
+import FontAwesome from 'react-fontawesome';
 
 import TextFeild from '../../component/textfeild';
 import Button from '../../component/button';
+import Divider from '../../component/title';
 import ReleaseNote from '../../doc/releaseNote.md';
 import Announcement from '../../doc/announcement.md';
 
 import request from 'superagent';
 import { postContentConfig } from '../../config';
+
+
+import Recaptcha from 'react-recaptcha';
 const { dataToJS } = helpers
 
 // 串接firebase 的資料，firebase其實只是拿來存webhook URL 跟總數而已
@@ -19,13 +24,15 @@ const { dataToJS } = helpers
 
 @firebase( [
   'webhookUri',
-  'total'
+  'total',
+  'recaptcha'
 ])
 @connect(
   ({firebase}) => {
 	return({
         total: dataToJS(firebase, 'total'),
 		webhookUri: dataToJS(firebase, 'webhookUri'),
+        recaptcha: dataToJS(firebase, 'recaptcha')
 	})
   }
 )
@@ -38,12 +45,17 @@ class Home extends Component {
         this.state = {
             inputContent: '',
             disabled: false,
+            verified: false,
             sendStatus: '送出'
         }
         
+        // binding this
+        this.renderInputElement = this.renderInputElement.bind(this);
+        this.renderRecaptcha = this.renderRecaptcha.bind(this);
+
         // document event handler
         // input 資料控制在這層
-
+        
         this.handleChange = (e) => {
             this.setState({
                 inputContent: e.target.value
@@ -51,26 +63,79 @@ class Home extends Component {
         }
 
         this.handleClick = (e) => {
-            this.setState({ disabled: true });
-            this._sendToSlack();
+
+            if ( !this.state.disabled ) {
+                this.setState({ disabled: true });
+                this._sendToSlack();
+            }
+
+        }
+        /*
+        this.verifyCallback = (response) => {
+            if( response && response.length > 0 ) {
+                this.setState({
+                    verified: true
+                })
+            }
+        }
+
+        this.onLoadCallback = (e) => {
+            console.log("captcha onLoad");
+        }
+        */
+    }
+    renderRecaptcha(config) {
+        // 因為目前的domain 會一直跳出驗證視窗，有點煩先拿掉...
+
+        if ( config ) {
+            return <Recaptcha
+                        sitekey={ config.sitekey }
+                        render="explicit"
+                        verifyCallback={ this.verifyCallback }
+                        onloadCallback={ this.onLoadCallback }
+                    />
+        }
+    }
+    renderInputElement() {
+        return <TextFeild 
+                    name="inputContent"
+                    styleName="textarea"
+                    value={ this.state.inputContent }
+                    type="textarea"
+                    placeholder="輸入內容"
+                    onChange={ this.handleChange } 
+                />
+    }
+    renderSuccessBlock(status) {
+        if( status === '成功送出' ) {
+            return (
+                <div styleName="success-block">
+                    <FontAwesome
+                        styleName="success-icon"
+                        name='check-circle'
+                        size='4x'
+                    />
+                    <p>訊息成功送出</p>
+                </div>
+            );
         }
     }
     render(){
+        const { recaptcha } = this.props;
         const { sendStatus, disabled } = this.state;
         return(
             <div>
                 <div styleName="mobile-hide" className="markdown-content" dangerouslySetInnerHTML={{__html: Announcement}} />
+                <Divider>發文到 #anonymous_test</Divider>
                 <div styleName="main">
-                    <h4>送出後留言將直接發送至SLACK #anonymous_test</h4>
-                    <TextFeild 
-                        name="inputContent"
-                        styleName="textarea"
-                        value={ this.state.inputContent }
-                        type="textarea"
-                        placeholder="輸入內容"
-                        onChange={ this.handleChange } />
-                    <Button onClick={ this.handleClick } disabled={ disabled }>{ sendStatus }</Button>
+                    
+                    { this.renderInputElement() }
+
+                    <Button onClick={ this.handleClick } disabled={ disabled } style={{ 'float': 'right' }}>{ sendStatus }</Button>
+                    
+                    { this.renderSuccessBlock(sendStatus) }
                 </div>
+                <Divider>版本訊息</Divider>
                 <div className="markdown-content" dangerouslySetInnerHTML={{__html: ReleaseNote}} />
             </div>
         )
@@ -93,7 +158,12 @@ class Home extends Component {
             .end(function(err, res){
                 if( res.status === 200 ) {
                     this.setState({ sendStatus: '成功送出' })
+                    
+                    //計算總數
                     firebase.set('total', total+1);
+
+                    // reload page
+                    setTimeout(() => { location.reload() }, 3000);
                 }else {
                     this.setState({ sendStatus: '好像壞掉了T.T' })
                 }

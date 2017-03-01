@@ -44,7 +44,8 @@ table {
 
 html, body{
     font-size: 16px;
-    background-color: #EFF2F9;
+    background-color: #fff;
+    color: #222;
 }
 * {
     box-sizing: border-box;
@@ -100,10 +101,8 @@ button {
 }
 
 .markdown-content {
-	padding: 20px;
-    margin: 20px 0;
-    background-color: #DCE2EA;
     line-height: 1.5em;
+    color: #777;
 }
 .markdown-content a {
     color: #1399E9;
@@ -114,4 +113,25 @@ button {
 .markdown-content  ul li {
     margin-left: 20px; 
     list-style-type: disc;
+}
+
+/* hack recaptch for mobile */
+#g-recaptcha {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+@media screen and (max-height: 575px) {
+    .rc-imageselect, #rc-imageselect { 
+        transform:scale(0.77); 
+        -webkit-transform:scale(0.77); 
+        transform-origin:0 0; 
+        -webkit-transform-origin:0 0; 
+    }
+    #g-recaptcha {
+        transform:scale(0.92); 
+        -webkit-transform:scale(0.92); 
+        transform-origin:0 0; 
+        -webkit-transform-origin:0 0; 
+    }
 }

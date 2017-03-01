@@ -103,7 +103,9 @@ module.exports = {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
         loader: 'babel',
-        
+        query: {
+          plugins: ['transform-decorators-legacy'],
+        }
       },
       // The notation here is somewhat confusing.
       // "postcss" loader applies autoprefixer to our CSS.
@@ -127,7 +129,7 @@ module.exports = {
         // Webpack 1.x uses Uglify plugin as a signal to minify *all* the assets
         // including CSS. This is confusing and will be removed in Webpack 2:
         // https://github.com/webpack/webpack/issues/283
-        loader: ExtracTextPlugin.extract('style',"css?modules&localIdentName=[local]_[hash:base64:5]")
+        loader: ExtractTextPlugin.extract('style',"css?modules&localIdentName=[local]_[hash:base64:5]")
         // Note: this won't work without `new ExtractTextPlugin()` in `plugins`.
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
@@ -154,6 +156,11 @@ module.exports = {
           limit: 10000,
           name: 'static/media/[name].[hash:8].[ext]'
         }
+      },
+      // markdown loader
+      { 
+        test: /\.md$/,
+        loader: "html!markdownattrs?config=markdownattrsLoaderCustomConfig" 
       }
     ]
   },
@@ -194,7 +201,7 @@ module.exports = {
         minifyJS: true,
         minifyCSS: true,
         minifyURLs: true
-      }
+      },
     }),
     // Makes some environment variables available to the JS code, for example:
     // if (process.env.NODE_ENV === 'production') { ... }. See `./env.js`.

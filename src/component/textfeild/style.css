@@ -8,7 +8,9 @@
 	border: 0;
 	resize : none;
 	overflow: hidden;
-	background: #DCE2EA;
+	background: #fff;
+	border: 2px solid #ccc;
+	border-radius: 5px;
 	color: #333;
 }
 .inputRoot .input:focus,.inputRoot .textarea:focus{
