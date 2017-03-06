@@ -7,8 +7,14 @@
     messagingSenderId: "240249612543"
 };
 export const postContentConfig = {
-    channel: "#anonymous_test",
+    channel: "#104_anonymous",
     username: "壹靈寺匿名僧 #",
-    icon_emoji: ":anonymous:",
-    text: ""
+    text: "",
+    unfurl_links: true,
+    attachments: [
+            {
+                "fallback": "Required plain-text summary of the attachment.",
+                "footer": "<https://incubator-104-frontend.github.io/anonymous/#/|靠北壹靈寺slack版>",
+            }
+        ]
 }

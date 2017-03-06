@@ -64,7 +64,7 @@ class Home extends Component {
 
         this.handleClick = (e) => {
 
-            if ( !this.state.disabled ) {
+            if ( !this.state.disabled && this.state.inputContent.length > 0 ) {
                 this.setState({ disabled: true });
                 this._sendToSlack();
             }
@@ -126,7 +126,7 @@ class Home extends Component {
         return(
             <div>
                 <div styleName="mobile-hide" className="markdown-content" dangerouslySetInnerHTML={{__html: Announcement}} />
-                <Divider>發文到 #anonymous_test</Divider>
+                <Divider>發文到 #104_anonymous</Divider>
                 <div styleName="main">
                     
                     { this.renderInputElement() }

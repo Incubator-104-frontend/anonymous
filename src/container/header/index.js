@@ -1,7 +1,7 @@
 import React from 'react';
 import style from './style.css';
 import CSSModule from 'react-css-modules';
-import logo from './logo.png'
+import logo from './logo.jpg'
 
 const Header = (props) => {
     return (
