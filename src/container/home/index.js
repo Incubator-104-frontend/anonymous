@@ -13,7 +13,7 @@ import ReleaseNote from '../../doc/releaseNote.md';
 import Announcement from '../../doc/announcement.md';
 
 import request from 'superagent';
-import { postContentConfig } from '../../config';
+import { postContentConfig, apiHost } from '../../config';
 
 
 import Recaptcha from 'react-recaptcha';
@@ -44,6 +44,7 @@ class Home extends Component {
         super(props);
         this.state = {
             inputContent: '',
+            tagContent:'',
             disabled: false,
             verified: false,
             sendStatus: '送出'
@@ -57,9 +58,8 @@ class Home extends Component {
         // input 資料控制在這層
         
         this.handleChange = (e) => {
-            this.setState({
-                inputContent: e.target.value
-            })
+            this.state[e.target.name] = e.target.value;
+            this.setState(this.state);
         }
 
         this.handleClick = (e) => {
@@ -84,6 +84,17 @@ class Home extends Component {
         }
         */
     }
+    /*
+    componentDidMount() {
+        request
+            .get(`${apiHost}/getGroup/front_end_group`)
+            .set('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
+            .end(function(err, res){
+                console.log(res);
+            });
+
+    }
+    */
     renderRecaptcha(config) {
         // 因為目前的domain 會一直跳出驗證視窗，有點煩先拿掉...
 
@@ -120,6 +131,16 @@ class Home extends Component {
             );
         }
     }
+    renderTagInputElement() {
+        return <TextFeild 
+                    name="tagContent"
+                    styleName="input"
+                    value={ this.state.tagContent }
+                    type="input"
+                    placeholder="你覺得誰應該出來面對（非必填，你也可以寫綽號）"
+                    onChange={ this.handleChange } 
+                />
+    }
     render(){
         const { recaptcha } = this.props;
         const { sendStatus, disabled } = this.state;
@@ -130,6 +151,7 @@ class Home extends Component {
                 <div styleName="main">
                     
                     { this.renderInputElement() }
+                    { this.renderTagInputElement() }
 
                     <Button onClick={ this.handleClick } disabled={ disabled } style={{ 'float': 'right' }}>{ sendStatus }</Button>
                     
@@ -142,8 +164,17 @@ class Home extends Component {
     }
     _sendToSlack() {
         const { firebase, webhookUri, total } = this.props;
+        const baseTag = {
+            "title": "你覺得誰應該出來面對？",
+            "color": "#36a64f",
+            "text": ""
+        };
 
         postContentConfig.text = this.state.inputContent;
+        if( this.state.tagContent.length > 0 ) {
+            baseTag.text = this.state.tagContent;
+            postContentConfig.attachments.unshift(baseTag);
+        }
         postContentConfig.username = postContentConfig.username.concat(total+1);
 
         // 送出資料到 incoming-webhook
